@@ -1,0 +1,19 @@
+# Ignore VSCode stuff
+.vscode
+
+# Ignore the testing Repo and its dependencies
+Repo
+Release
+Release.asc
+Packages
+*.gz
+*.tar
+
+# Ignore any build folder
+**/bin
+
+# Ignore gnupg stuff
+.gnupg
+
+# Ignore all keys!!!
+**/*.asc
