@@ -6,18 +6,18 @@
 #include <setupHandler.h>
 #include <installHandler.h>
 #include <uninstallHandler.h>
+#include <listHandler.h>
 
-void updateHandler(int, const char *argv[]);
-void listHandler(int, const char *argv[]);
+void updateHandler(int argc, const char *argv[]);
 
-char const *options[] = {"setup", "install", "uninstall", "update", "list"};
-void (*optionHandlers[])(int, const char *[]) = {setupHandler, installHandler, uninstallHandler, updateHandler, listHandler};
+char const *options[] = {"setup", "install", "xinstall", "uninstall", "update", "xupdate", "list"};
+void (*optionHandlers[])(int, const char *[]) = {setupHandler, installHandler, installHandler, uninstallHandler, updateHandler, updateHandler, listHandler};
 
 int main(int argc, const char *argv[])
 {
     if (argc < 2)
     {
-        printf("Error missing command parameters\nSyntax: %s [setup|install|update|list] [options...]\n", argv[0]);
+        printf("Error missing command parameters\nSyntax: %s [setup|install|xinstall|uninstall|update|list] [options...]\n", argv[0]);
         return 1;
     }
 
@@ -30,12 +30,24 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
-void updateHandler(int, const char *argv[])
+void updateHandler(int argc, const char *argv[])
 {
-    printf("Updating...");
-}
+    char *t = "xinstall";
 
-void listHandler(int, const char *argv[])
-{
-    printf("Listing...");
+    if (argv[1][0] == 'x')  // run in unsafe mode
+    {
+        char ch = 'n';
+        fputs("Run in uncheck mode? This won\'t check the package SHA256, use with caution (y/n[default]): ", stdout);
+        scanf("%c", &ch);
+        if (ch == 'n')
+        {
+            puts("Got it aborting...");
+            exit(0);
+        }
+
+        argv[1] = t;   // set install mode to xinstall
+    }
+
+    uninstallHandler(argc, argv);
+    installHandler(argc, argv);
 }

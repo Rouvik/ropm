@@ -8,6 +8,20 @@ void installHandler(int argc, const char *argv[])
         exit(1);
     }
 
+    if (argv[1][0] == 'x')
+    {
+        char ch = 'n';
+        fputs("Run in uncheck mode? This won\'t check the package SHA256, use with caution (y/n[default]): ", stdout);
+        scanf("%c", &ch);
+
+        if (ch == 'n')
+        {
+            puts("Got it aborting...");
+            exit(0);
+        }
+    }
+    
+
     char *HOME = getenv("HOME");
     if (!HOME)
     {
@@ -24,7 +38,7 @@ void installHandler(int argc, const char *argv[])
     if (!fp)
     {
         perror("[FATAL ERROR] Failed to open file");
-        fprintf(stderr, "[INFO] File path for packages was: %s\n", buf);
+        fprintf(stderr, "[INFO] File path for packages was: %s\n[INFO] Please use \"%s setup\" to setup the package list before installing\n", buf, argv[0]);
         exit(1);
     }
 
@@ -73,15 +87,18 @@ void installHandler(int argc, const char *argv[])
             exit(1);
         }
 
-        sprintf(buf, "%s/.ropm/%s.tar.gz", HOME, packageName);
-        if (sha256Compare(sha, buf))
+        if (argv[1][0] != 'x')
         {
-            fputs("[FATAL ERROR] SHA check failed aborting, package is probably compromised\n", stderr);
-            free(line);
             sprintf(buf, "%s/.ropm/%s.tar.gz", HOME, packageName);
-            remove(buf);
-            fclose(fp);
-            exit(1);
+            if (sha256Compare(sha, buf))
+            {
+                fputs("[FATAL ERROR] SHA check failed aborting, package is probably compromised\n", stderr);
+                free(line);
+                sprintf(buf, "%s/.ropm/%s.tar.gz", HOME, packageName);
+                remove(buf);
+                fclose(fp);
+                exit(1);
+            }
         }
 
         free(line);
@@ -89,7 +106,14 @@ void installHandler(int argc, const char *argv[])
         sha = NULL;
         sp = NULL;
 
-        puts("[INFO] Package SHA match...installing");
+        if (argv[1][0] == 'x')
+        {
+            puts("[WARNING] Package SHA check ignored...installing");
+        }
+        else
+        {
+            puts("[INFO] Package SHA match...installing");
+        }
 
         sprintf(buf, "gzip -d %s/.ropm/%s.tar.gz", HOME, packageName);
         if (system(buf))
