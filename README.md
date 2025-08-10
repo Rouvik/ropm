@@ -1,4 +1,7 @@
 # ROPM package manager
+# Important Note:
+I didnt provide any public key for gpg checks for now, so for the gpg check during setup phase use `n` (NO) to avoid the check or it will crash.
+
 ## What is this?
 A simple package manager written by me in bare C using libcrypto, curl, gpg as dependencies.
 The goal of this package manager is education and not serious hosting of packages, however I cared to implement

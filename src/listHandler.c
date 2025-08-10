@@ -51,3 +51,13 @@ void listHandler(int argc, const char *argv[])
     
     printf("Total %d packages in remote, if you don\'t find an existing package then run \"%s setup\" to reset the package ring (this won\'t delete your existing programs)\n", count, argv[0]);
 }
+
+/*
+    Package format:
+    <Package Name> <Package SHA 256 checksum>
+    <Package Name> <Package SHA 256 checksum>
+    <Package Name> <Package SHA 256 checksum>
+    .
+    .
+    .
+*/

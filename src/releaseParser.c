@@ -88,3 +88,10 @@ void freeRelease(Release_t *release)
     release->sha256hash = NULL;
     release->version[0] = release->version[1] = release->version[2] = 0;
 }
+
+/*
+    Release format:
+    <Maintainer Name>
+    <Version = Major.Minor.Release>
+    <Packages.gz SHA256>
+*/
